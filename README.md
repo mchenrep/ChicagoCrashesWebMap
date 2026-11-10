@@ -3,6 +3,8 @@
 Interactive Streamlit app built on the City of Chicago
 [Traffic Crashes – Crashes](https://data.cityofchicago.org/Transportation/Traffic-Crashes-Crashes/85ca-t3if) dataset.
 
+[Try It Here!](https://chicagocrasheswebmap-fdgsjcxsyejizerzhrekyz.streamlit.app/#chicago-traffic-crash-explorer)
+
 ## Features
 - **Map**: clickable, severity-colored markers (popup shows address, time, crash type, injuries, cause, weather, road, hit-and-run) or a heatmap.
 - **Filters**: date range, hour of day, weather, injury severity, hit-and-run.
@@ -23,5 +25,4 @@ Optional: add `SOCRATA_APP_TOKEN = "..."` to `.streamlit/secrets.toml` for highe
 - `st.cache_data` (1 hr TTL) caches queries; `st.cache_resource` trains the model once per process.
 - Marker clustering keeps the browser responsive; the heatmap handles up to 20k points.
 
-## Deploy
-Push to GitHub and deploy free on Streamlit Community Cloud (main file: `app.py`).
+
