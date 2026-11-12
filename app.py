@@ -205,10 +205,10 @@ def explain_error(e):
 
 def error_screen(e, context):
     title, msg, tips = explain_error(e)
-    with st.container(border=True):
-        st.error(f"**⚠️ {title}**  \n{msg}")
-        st.markdown("**Try this:**\n" + "\n".join(f"- {t}" for t in tips))
-        if st.button("🔄 Retry", key=f"retry_{context}"):
+    with st.container():
+        st.error(f"{title}. {msg}")
+        st.markdown("Suggestions:\n" + "\n".join(f"- {t}" for t in tips))
+        if st.button("Retry", key=f"retry_{context}"):
             st.cache_data.clear()
             st.rerun()
         with st.expander("Technical details"):
@@ -216,15 +216,15 @@ def error_screen(e, context):
 
 
 def empty_screen():
-    with st.container(border=True):
-        st.info("**🔍 No crashes match these filters**  \nNothing in the data fits this combination.")
-        st.markdown("**Try this:**\n- Widen the date range\n- Clear the weather or severity filters\n"
+    with st.container():
+        st.info("No crashes match these filters.")
+        st.markdown("Suggestions:\n- Widen the date range\n- Clear the weather or severity filters\n"
                     "- Expand the hour-of-day range")
 
 
 # --------------------------------- UI ---------------------------------------
-st.set_page_config(page_title="Chicago Crash Explorer", page_icon="🚗", layout="wide")
-st.title("🚗 Chicago Traffic Crash Explorer")
+st.set_page_config(page_title="Chicago Crash Explorer", layout="wide")
+st.title("Chicago Traffic Crash Explorer")
 st.caption("Live data from the City of Chicago Data Portal. Click a point on the map for crash details.")
 
 today = dt.date.today()
@@ -240,7 +240,7 @@ with st.sidebar:
         mode = st.radio("Map style", ["Points (clickable)", "Heatmap"], horizontal=True)
         limit = st.select_slider("Max points", [1000, 2500, 5000, 10000, 20000], value=2500,
                                  help="Most recent crashes first. Heatmap mode can use more points.")
-        st.form_submit_button("Apply filters", type="primary", use_container_width=True)
+        st.form_submit_button("Apply filters", use_container_width=True)
 
 if len(d_range) != 2:
     st.warning("Pick both a start and end date, then press Apply.")
@@ -256,7 +256,7 @@ except Exception as e:
     st.stop()
 total = count_crashes(where)
 
-tab_map, tab_trends, tab_model = st.tabs(["🗺️ Map", "📊 Trends", "🔮 Injury risk predictor"])
+tab_map, tab_trends, tab_model = st.tabs(["Map", "Trends", "Injury risk predictor"])
 
 with tab_map:
     if df.empty:
@@ -289,11 +289,10 @@ with tab_map:
         event = st.pydeck_chart(deck, height=560, on_select="ignore" if heat else "rerun",
                                 selection_mode="single-object", key="crash_map")
 
-
-
         if not heat:
             st.markdown(" &nbsp; ".join(
-                f"<span style='color:rgb({c[0]},{c[1]},{c[2]})'>●</span> {k.title()}"
+                f"<span style='display:inline-block;width:10px;height:10px;border-radius:50%;"
+                f"background:rgb({c[0]},{c[1]},{c[2]});margin-right:4px'></span>{k.capitalize()}"
                 for k, c in COLORS.items()), unsafe_allow_html=True)
             sel = getattr(event, "selection", None) or {}
             picked = (sel.get("objects", {}) or {}).get("crashes", [])
